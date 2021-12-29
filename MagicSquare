@@ -1,0 +1,116 @@
+public class MagicSquare {
+
+	static int[][] mirror(int[][] a) {
+		// copy input matrix
+		int[][] copy = new int[a.length][a[0].length];
+		for (int i = 0; i < a.length; i++)
+			for (int j = 0; j < a[0].length; j++)
+				copy[i][j] = a[i][j];
+		//mirror matrix vertically
+		for(int h = 0; h < copy.length; h++) {
+			int[] b = new int[copy[h].length];
+			for (int i = (copy[h].length - 1), j = 0; i >= 0; i--, j++) {
+				b[j] = copy[h][i];
+			}
+			copy[h] = b;
+		}
+		return copy;
+	}
+	
+	static int[][] transpose (int[][] a) {
+		//copy input matrix
+		int[][] copy = new int[a.length][a[0].length];
+		for (int i = 0; i < a.length; i++)
+			for (int j = 0; j < a[0].length; j++)
+				copy[i][j] = a[i][j];
+		
+		//transpose matrix
+		int[][] r = new int[a.length][a[0].length];
+		for (int i = 0; i < a.length; i++)
+			for (int j = 0; j < a[0].length; j++)
+				r[i][j] = copy[j][i];
+        
+		return r;
+	}
+		
+	static int[] getDiagonals (int[][] m) {
+		//compute diagonal sums
+		int[] out = new int[m[0].length];
+		for(int k = 0; k < m.length; k++) {
+		int sum = 0;
+			for (int i = 0; i < m.length; i++) {
+				for (int j = 0; j < m[0].length; j++) {
+					if (i == j+k) {
+						sum += m[i][j];
+					}
+				}
+			}
+		out[k] = sum;
+		}			
+		return out;
+	}
+	
+	static boolean isMagicSquare (int[][] a) {
+		boolean m = true;
+		//save sum of rows in array and check for equality
+		int[] rowsums = new int [a.length];
+		for (int i = 0; i < a.length; i++) {
+			int sum = 0;
+			for (int j = 0; j < a[0].length; j++) {
+				sum += a[i][j];
+			}
+			rowsums[i] = sum;
+		}
+		for (int i = 1; i < rowsums.length; i++)
+			if (rowsums[i] != rowsums[0]) m = false;
+		//save sum of columns in array and check for equality
+		int[][] b = new int[a[0].length][a.length];
+		b = transpose(a);
+		int[] columnsums = new int [b.length];
+		for (int i = 0; i < b.length; i++) {
+			int sum = 0;
+			for (int j = 0; j < b[0].length; j++) {
+				sum += b[i][j];
+			}
+			columnsums[i] = sum;
+		}
+		for (int i = 1; i < columnsums.length; i++)
+			if (rowsums[i] != columnsums[0]) m = false;
+		//check if diagonals are equal
+		int[] d1 = getDiagonals(a);
+		int diag1 = d1[0];
+		int[] d2 = getDiagonals(mirror(a));
+		int diag2 = d2[0];
+		if (diag1 != diag2) m = false;
+		//overall check for equality
+		if (diag1 != rowsums[0]) m = false;
+		if (rowsums[0] != columnsums[0]) m = false;
+		return m;
+	}
+	
+	public static void main(String[] args) {
+		//Matrix Input
+		System.out.println("Input size of square matrix: ");
+		int n = SavitchIn.readInt();
+		int[][] x = new int[n][n];
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				System.out.println("Input number: ");
+				x[i][j] = SavitchIn.readInt();
+			}
+		}
+		//Matrix Output
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				System.out.print(x[i][j] + " ");
+			}
+			System.out.println();
+		}
+		//Magic Square Check
+		if (isMagicSquare(x)) 
+			System.out.println("The matrix is a magic square!");
+		else
+			System.out.println("Not a magic square!");
+	}
+}
+
